@@ -10,7 +10,6 @@ const rootReducer = combineReducers({
 	pokemones: pokeReducer,
 });
 
-//Inicializamos la tienda y configuración de devtools
 export default function generateStore() {
 	const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 	return store;
