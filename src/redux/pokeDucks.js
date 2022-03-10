@@ -1,4 +1,5 @@
 import axios from "axios";
+import { pokeApiMemo } from "../helper/memo";
 
 //Constantes
 const dataInicial = {
@@ -29,37 +30,26 @@ export default function pokeReducer(state = dataInicial, action) {
 
 //Actions
 export const obtenerPokemonesAccion = () => async (dispatch) => {
-	try {
-		const res = await axios.get(`https://pokeapi.co/api/v2/pokemon?offset=0&limit=20`);
+	const url = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=50`;
 
-		dispatch({ type: OBTENER_POKEMONES_EXITO, payload: res.data });
-	} catch (error) {
-		console.log(error);
-	}
+	const res = await pokeApiMemo(url);
+
+	dispatch({ type: OBTENER_POKEMONES_EXITO, payload: res });
 };
 
 export const siguientePaginaAction = () => async (dispatch, getState) => {
-	//Accedemos a las urls que nos devuelve la API
-	const nextUrl = getState().pokemones.next;
-	try {
-		// http
-		const res = await axios.get(nextUrl);
+	const nextUrl = getState().pokemones.next; //Api next url
 
-		dispatch({ type: SIGUIENTE_PAGINA_EXITO, payload: res.data });
-	} catch (error) {
-		console.log(error);
-	}
+	//Helper for memoization
+	const res = await pokeApiMemo(nextUrl);
+
+	dispatch({ type: SIGUIENTE_PAGINA_EXITO, payload: res });
 };
 export const retrocederPaginaAction = () => async (dispatch, getState) => {
-	//Accedemos a las urls que nos devuelve la API
-	const backUrl = getState().pokemones.previous;
+	const backUrl = getState().pokemones.previous; //Api previously url
 
-	try {
-		// http
-		const res = await axios.get(backUrl);
+	//Helper for memoization
+	const res = await pokeApiMemo(backUrl);
 
-		dispatch({ type: SIGUIENTE_PAGINA_EXITO, payload: res.data });
-	} catch (error) {
-		console.log(error);
-	}
+	dispatch({ type: SIGUIENTE_PAGINA_EXITO, payload: res });
 };

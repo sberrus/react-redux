@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { Container, Button } from "react-bootstrap";
 
 // Dispatch y selector son los metodos que nos permiten interactuar y leer datos de la store
 import { useDispatch, useSelector } from "react-redux";
@@ -10,41 +11,73 @@ const Pokemones = () => {
 	// Instanciamos dispatch para poder interactuar con la store.
 	const dispatch = useDispatch();
 
-	// Instanciamos useSelector para poder leer los datos de la store.
-	// useSelector recibe un callback que recibe la store y nosotros podemos
-	// indicar a que datos de la store queremos acceder
 	const pokemones = useSelector((store) => {
 		return store.pokemones.results;
 	});
-
-	const offset = useSelector((store) => {
-		return store.pokemones.offset;
+	const nextUrl = useSelector((store) => {
+		return store.pokemones.next;
+	});
+	const previousUrl = useSelector((store) => {
+		return store.pokemones.previous;
 	});
 
 	return (
-		<div>
+		<Container>
 			<h1>Lista de pokemones</h1>
-			<button
-				onClick={() => {
-					dispatch(retrocederPaginaAction());
-				}}
-			>
-				Anterior
-			</button>{" "}
-			<button
-				onClick={() => {
-					dispatch(obtenerPokemonesAccion());
-				}}
-			>
-				Get Pokemones
-			</button>{" "}
-			<button
-				onClick={() => {
-					dispatch(siguientePaginaAction());
-				}}
-			>
-				Siguiente
-			</button>
+			{previousUrl ? (
+				<Button
+					onClick={() => {
+						dispatch(retrocederPaginaAction());
+					}}
+				>
+					Anterior
+				</Button>
+			) : (
+				<Button
+					disabled
+					onClick={() => {
+						dispatch(retrocederPaginaAction());
+					}}
+				>
+					Anterior
+				</Button>
+			)}{" "}
+			{nextUrl ? (
+				<Button
+					disabled
+					onClick={() => {
+						dispatch(obtenerPokemonesAccion());
+					}}
+				>
+					Get Pokemones
+				</Button>
+			) : (
+				<Button
+					onClick={() => {
+						dispatch(obtenerPokemonesAccion());
+					}}
+				>
+					Get Pokemones
+				</Button>
+			)}{" "}
+			{nextUrl ? (
+				<Button
+					onClick={() => {
+						dispatch(siguientePaginaAction());
+					}}
+				>
+					Siguiente
+				</Button>
+			) : (
+				<Button
+					disabled
+					onClick={() => {
+						dispatch(siguientePaginaAction());
+					}}
+				>
+					Siguiente
+				</Button>
+			)}
 			<ol>
 				{pokemones.map((pokemon) => (
 					<li key={pokemon.name}>
@@ -52,7 +85,7 @@ const Pokemones = () => {
 					</li>
 				))}
 			</ol>
-		</div>
+		</Container>
 	);
 };
 
