@@ -14,14 +14,17 @@ import "./config/firebase";
 //Redux
 import { Provider } from "react-redux";
 import generateStore from "./redux/store";
+import { BrowserRouter } from "react-router-dom";
 //Store
 const store = generateStore();
 
 ReactDOM.render(
 	<React.StrictMode>
-		<Provider store={store}>
-			<App />
-		</Provider>
+		<BrowserRouter>
+			<Provider store={store}>
+				<App />
+			</Provider>
+		</BrowserRouter>
 	</React.StrictMode>,
 	document.getElementById("root")
 );

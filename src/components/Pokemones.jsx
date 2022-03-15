@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import { Container, Button, Row, Col, ListGroup } from "react-bootstrap";
-import { GoogleAuthProvider, signInWithPopup, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -15,38 +16,9 @@ import {
 import DetallePokemon from "./DetallePokemon";
 
 const Pokemones = () => {
-	//usando Firebase para authenticación
-	const [isLogged, setIsLogged] = useState(false);
 	const [auth] = useState(() => getAuth());
-	const provider = new GoogleAuthProvider();
 
-	useEffect(() => {
-		onAuthStateChanged(auth, (user) => {
-			if (!user) {
-				signInWithPopup(auth, provider)
-					.then((result) => {
-						// Si todo sale bien devuelve al usuario autenticado
-					})
-					.catch((error) => {
-						//Cacheamos el error
-						console.log(error);
-					});
-				return;
-			}
-			console.log(user);
-			setIsLogged(true);
-		});
-
-		return () => {};
-	}, []);
-
-	const logOut = () => {
-		signOut(auth)
-			.then(() => {
-				setIsLogged(false);
-			})
-			.catch((error) => console.log(error));
-	};
+	const navigate = useNavigate();
 
 	// Instanciamos dispatch para poder interactuar con la store.
 	const dispatch = useDispatch();
@@ -61,21 +33,18 @@ const Pokemones = () => {
 		return store.pokemones.previous;
 	});
 
+	useEffect(() => {
+		onAuthStateChanged(auth, (user) => {
+			if (!user) {
+				navigate("/login");
+			}
+		});
+
+		return () => {};
+	}, []);
 	return (
 		<Container>
 			<Row>
-				{isLogged && (
-					<Col sm={12}>
-						<Button
-							variant="danger"
-							onClick={() => {
-								logOut();
-							}}
-						>
-							Sign Out
-						</Button>
-					</Col>
-				)}
 				<Col>
 					<h5>Lista de pokemones</h5>
 					{previousUrl ? (
