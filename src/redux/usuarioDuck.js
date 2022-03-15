@@ -41,7 +41,6 @@ export const ingresoUsuarioAccion = () => async (dispatch) => {
 		const provider = new GoogleAuthProvider();
 
 		const res = await signInWithPopup(auth, provider);
-		console.log(res);
 		dispatch({
 			type: USUARIO_EXITO,
 			payload: { uid: res.user.uid, email: res.user.email },
