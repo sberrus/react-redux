@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Pokemones from "./components/Pokemones";
 import Login from "./components/Login";
 import NavMenu from "./components/NavMenu";
+import Perfil from "./components/Perfil";
 
 function App() {
 	const [auth] = useState(() => getAuth());
@@ -21,7 +22,7 @@ function App() {
 		});
 
 		return () => {};
-	}, []);
+	});
 
 	//TODO: BUSCAR METODO MÁS OPTIMO PARA ESTA SOLUCIÓN
 	const RutaPrivada = ({ children }) => {
@@ -48,6 +49,14 @@ function App() {
 					element={
 						<RutaPrivada>
 							<Pokemones />
+						</RutaPrivada>
+					}
+				/>
+				<Route
+					path="/perfil"
+					element={
+						<RutaPrivada>
+							<Perfil />
 						</RutaPrivada>
 					}
 				/>

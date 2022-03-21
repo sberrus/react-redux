@@ -1,11 +1,9 @@
 import React from "react";
 import { Card, Col } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const DetallePokemon = () => {
 	//Llamamos al dispatch de redux y a la store
-	const dispatch = useDispatch();
-
 	const detallePokemon = useSelector((store) => store.pokemones.pokemonDetalle);
 
 	return (

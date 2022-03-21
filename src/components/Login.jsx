@@ -22,7 +22,7 @@ const Login = () => {
 			navigate("/");
 		}
 		return () => {};
-	}, [activo]);
+	}, [activo, navigate]);
 
 	return (
 		<div className="text-center mt-5">

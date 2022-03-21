@@ -19,7 +19,7 @@ const NavMenu = () => {
 				<Container className="d-flex">
 					<div>
 						<Link to="/" className="navbar-brand">
-							Home
+							App Pokemones
 						</Link>
 					</div>
 					<div>
@@ -27,9 +27,14 @@ const NavMenu = () => {
 						<Navbar.Collapse id="basic-navbar-nav">
 							<Nav className="me-auto">
 								{userActive ? (
-									<Button variant="danger" onClick={logOut}>
-										Cerrar Sesión
-									</Button>
+									<>
+										<NavLink to="/perfil" className="nav-link">
+											Perfil
+										</NavLink>
+										<Button variant="danger" onClick={logOut}>
+											Cerrar Sesión
+										</Button>
+									</>
 								) : (
 									<NavLink to="/login" className="nav-link">
 										Login
