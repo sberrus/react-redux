@@ -41,7 +41,8 @@ const Pokemones = () => {
 		});
 
 		return () => {};
-	}, []);
+	});
+
 	return (
 		<Container>
 			<Row>

@@ -1,4 +1,5 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
 //constants
 const dataInicial = {
@@ -37,15 +38,40 @@ export const ingresoUsuarioAccion = () => async (dispatch) => {
 		type: LOADING,
 	});
 	try {
+		//Init auth provider
 		const auth = getAuth();
 		const provider = new GoogleAuthProvider();
-
 		const res = await signInWithPopup(auth, provider);
-		dispatch({
-			type: USUARIO_EXITO,
-			payload: { uid: res.user.uid, email: res.user.email },
-		});
-		localStorage.setItem("usuario", JSON.stringify({ uid: res.user.uid, email: res.user.email }));
+
+		const usuario = {
+			uid: res.user.uid,
+			email: res.user.email,
+			displayName: res.user.displayName,
+			photoUrl: res.user.photoURL,
+		};
+
+		//Init firestore provider
+		const db = getFirestore();
+
+		const docRef = doc(db, "usuarios", usuario.email);
+		const docSnap = await getDoc(docRef);
+
+		if (docSnap.exists) {
+			console.log(docSnap.data());
+			dispatch({
+				type: USUARIO_EXITO,
+				payload: docSnap.data(),
+			});
+			localStorage.setItem("usuario", JSON.stringify(docSnap.data()));
+		} else {
+			const usuariosRef = collection(db, "usuarios");
+			await setDoc(doc(usuariosRef, usuario.email), usuario);
+			dispatch({
+				type: USUARIO_EXITO,
+				payload: usuario,
+			});
+			localStorage.setItem("usuario", JSON.stringify(usuario));
+		}
 	} catch (error) {
 		console.log(error);
 		dispatch({ type: USUARIO_ERROR });
