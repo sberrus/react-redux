@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Button, Card, Container, FormControl, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
+
+//Redux
 import { useDispatch, useSelector } from "react-redux";
+import { cambiarNombreUsuario } from "../redux/usuarioDuck";
 
 const Perfil = () => {
 	const [nombreUsuario, setNombreUsuario] = useState("");
@@ -10,12 +13,19 @@ const Perfil = () => {
 
 	const usuario = useSelector((store) => store.usuario.user);
 
-	const handleNameUpdate = (e) => {
+	const handleInputNameChange = (e) => {
 		setNombreUsuario(e.target.value);
 	};
 
 	const toggleChangingNameFlag = () => {
 		setIsChangingName(!isChangingName);
+		setNombreUsuario("");
+	};
+
+	const handleChangeName = async () => {
+		dispatch(cambiarNombreUsuario(nombreUsuario));
+		setIsChangingName(!isChangingName);
+		setNombreUsuario("");
 	};
 
 	return (
@@ -40,11 +50,16 @@ const Perfil = () => {
 										aria-describedby="Editar Nombre Usuario"
 										value={nombreUsuario}
 										onChange={(e) => {
-											handleNameUpdate(e);
+											handleInputNameChange(e);
 										}}
 									/>
-									<Button variant="outline-success">Editar Nombre</Button>
+									<Button variant="outline-success" onClick={handleChangeName}>
+										Editar Nombre
+									</Button>
 								</InputGroup>
+								<Button variant="outline-danger" onClick={toggleChangingNameFlag}>
+									Volver
+								</Button>
 							</>
 						) : (
 							<>

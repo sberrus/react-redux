@@ -1,5 +1,5 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 
 //constants
 const dataInicial = {
@@ -12,6 +12,7 @@ const LOADING = "LOADING";
 const USUARIO_ERROR = "USUARIO_ERROR";
 const USUARIO_EXITO = "USUARIO_EXITO";
 const CERRAR_SESION_EXITO = "CERRAR_SESION_EXITO";
+const ACTUALIZAR_NOMBRE_USUARIO_EXITO = "ACTUALIZAR_NOMBRE_USUARIO_EXITO";
 
 // reducer
 export default function usuarioReducer(state = dataInicial, action) {
@@ -26,6 +27,8 @@ export default function usuarioReducer(state = dataInicial, action) {
 			return { ...state, loading: false, activo: true, user: action.payload };
 		case CERRAR_SESION_EXITO:
 			return { ...dataInicial };
+		case ACTUALIZAR_NOMBRE_USUARIO_EXITO:
+			return { ...state, user: action.payload };
 		default:
 			return { ...state };
 	}
@@ -91,4 +94,27 @@ export const cerrarSesionAccion = () => async (dispatch) => {
 	localStorage.removeItem("usuario");
 
 	dispatch({ type: CERRAR_SESION_EXITO });
+};
+
+export const cambiarNombreUsuario = (newName) => async (dispatch, getState) => {
+	try {
+		const db = getFirestore();
+		const user = getState().usuario.user;
+
+		//Instanciamos la collección de usuarios
+		const usuarioRef = doc(db, "usuarios", user.email);
+
+		const updatedUser = {
+			...user,
+			displayName: newName,
+		};
+
+		await updateDoc(usuarioRef, {
+			displayName: newName,
+		});
+
+		dispatch({ type: ACTUALIZAR_NOMBRE_USUARIO_EXITO, payload: updatedUser });
+	} catch (error) {
+		console.log(error);
+	}
 };
