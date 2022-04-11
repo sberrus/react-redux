@@ -1,5 +1,6 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { collection, doc, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 //constants
 const dataInicial = {
@@ -13,6 +14,7 @@ const USUARIO_ERROR = "USUARIO_ERROR";
 const USUARIO_EXITO = "USUARIO_EXITO";
 const CERRAR_SESION_EXITO = "CERRAR_SESION_EXITO";
 const ACTUALIZAR_NOMBRE_USUARIO_EXITO = "ACTUALIZAR_NOMBRE_USUARIO_EXITO";
+const ACTUALIZAR_FOTO_PERFIL_EXITO = "ACTUALIZAR_FOTO_PERFIL_EXITO";
 
 // reducer
 export default function usuarioReducer(state = dataInicial, action) {
@@ -28,6 +30,8 @@ export default function usuarioReducer(state = dataInicial, action) {
 		case CERRAR_SESION_EXITO:
 			return { ...dataInicial };
 		case ACTUALIZAR_NOMBRE_USUARIO_EXITO:
+			return { ...state, user: action.payload, loading: false };
+		case ACTUALIZAR_FOTO_PERFIL_EXITO:
 			return { ...state, user: action.payload, loading: false };
 		default:
 			return { ...state };
@@ -119,6 +123,40 @@ export const cambiarNombreUsuario = (newName) => async (dispatch, getState) => {
 
 		dispatch({ type: ACTUALIZAR_NOMBRE_USUARIO_EXITO, payload: updatedUser });
 		localStorage.setItem("usuario", JSON.stringify(updatedUser));
+	} catch (error) {
+		console.log(error);
+	}
+};
+export const editarFotoPerfil = (image) => async (dispatch, getState) => {
+	dispatch({
+		type: LOADING,
+	});
+
+	//Actual User
+	const user = getState().usuario.user;
+
+	//Firebase Storage
+	const storage = getStorage();
+	const storageRef = ref(storage, `profilePictures/${user.uid}`);
+	//Firebase Firestore
+	const db = getFirestore();
+	const usuarioRef = doc(db, "usuarios", user.email);
+
+	try {
+		uploadBytes(storageRef, image).then((snapshot) => {
+			getDownloadURL(ref(storage, `profilePictures/${user.uid}`)).then((url) => {
+				updateDoc(usuarioRef, {
+					photoUrl: url,
+				});
+
+				const updatedUser = { ...user, photoUrl: url };
+				dispatch({
+					type: "ACTUALIZAR_FOTO_PERFIL_EXITO",
+					payload: { ...user, photoUrl: url },
+				});
+				localStorage.setItem("usuario", JSON.stringify(updatedUser));
+			});
+		});
 	} catch (error) {
 		console.log(error);
 	}
