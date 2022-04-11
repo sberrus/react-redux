@@ -22,6 +22,7 @@ const Login = () => {
 			navigate("/");
 		}
 		return () => {};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activo, navigate]);
 
 	return (

@@ -28,7 +28,7 @@ export default function usuarioReducer(state = dataInicial, action) {
 		case CERRAR_SESION_EXITO:
 			return { ...dataInicial };
 		case ACTUALIZAR_NOMBRE_USUARIO_EXITO:
-			return { ...state, user: action.payload };
+			return { ...state, user: action.payload, loading: false };
 		default:
 			return { ...state };
 	}
@@ -59,13 +59,15 @@ export const ingresoUsuarioAccion = () => async (dispatch) => {
 		const docRef = doc(db, "usuarios", usuario.email);
 		const docSnap = await getDoc(docRef);
 
-		if (docSnap.exists) {
-			console.log(docSnap.data());
+		if (docSnap.exists()) {
 			dispatch({
 				type: USUARIO_EXITO,
 				payload: docSnap.data(),
 			});
-			localStorage.setItem("usuario", JSON.stringify(docSnap.data()));
+
+			//Data to store
+			const data = JSON.stringify(docSnap.data());
+			localStorage.setItem("usuario", data);
 		} else {
 			const usuariosRef = collection(db, "usuarios");
 			await setDoc(doc(usuariosRef, usuario.email), usuario);
@@ -97,23 +99,26 @@ export const cerrarSesionAccion = () => async (dispatch) => {
 };
 
 export const cambiarNombreUsuario = (newName) => async (dispatch, getState) => {
+	dispatch({
+		type: LOADING,
+	});
 	try {
 		const db = getFirestore();
 		const user = getState().usuario.user;
 
-		//Instanciamos la collección de usuarios
 		const usuarioRef = doc(db, "usuarios", user.email);
+
+		await updateDoc(usuarioRef, {
+			displayName: newName,
+		});
 
 		const updatedUser = {
 			...user,
 			displayName: newName,
 		};
 
-		await updateDoc(usuarioRef, {
-			displayName: newName,
-		});
-
 		dispatch({ type: ACTUALIZAR_NOMBRE_USUARIO_EXITO, payload: updatedUser });
+		localStorage.setItem("usuario", JSON.stringify(updatedUser));
 	} catch (error) {
 		console.log(error);
 	}

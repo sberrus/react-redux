@@ -41,7 +41,7 @@ const Pokemones = () => {
 		});
 
 		return () => {};
-	});
+	}, [auth, navigate]);
 
 	return (
 		<Container>

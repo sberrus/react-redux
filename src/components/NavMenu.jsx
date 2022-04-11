@@ -15,7 +15,7 @@ const NavMenu = () => {
 
 	return (
 		<>
-			<Navbar bg="dark" variant="dark" expand="lg" className="mb-2">
+			<Navbar bg="dark" variant="dark" expand="sm" className="mb-2">
 				<Container className="d-flex">
 					<div>
 						<Link to="/" className="navbar-brand">

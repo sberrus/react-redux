@@ -26,7 +26,7 @@ function App() {
 
 	//TODO: BUSCAR METODO MÁS OPTIMO PARA ESTA SOLUCIÓN
 	const RutaPrivada = ({ children }) => {
-		if (localStorage.getItem("usuario") !== null) {
+		if (localStorage.getItem("usuario")) {
 			const storedUser = JSON.parse(localStorage.getItem("usuario"));
 			if (storedUser?.uid && firebaseUser?.uid) {
 				if (storedUser.uid === firebaseUser.uid) {
