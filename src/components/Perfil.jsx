@@ -19,12 +19,12 @@ const Perfil = () => {
 	//Estados del input cambio de usuarios
 	const [nombreUsuario, setNombreUsuario] = useState("");
 	const [isChangingName, setIsChangingName] = useState(false);
-	const [show, setShow] = useState(false);
 
 	//Redux
 	const dispatch = useDispatch();
 	const usuario = useSelector((store) => store.usuario.user);
 	const loading = useSelector((store) => store.usuario.loading);
+	const loading_profile_picture = useSelector((store) => store.usuario.loading_profile_picture);
 
 	const handleInputNameChange = (e) => {
 		setNombreUsuario(e.target.value);
@@ -65,19 +65,27 @@ const Perfil = () => {
 						<Card.Img variant="top" src={usuario.photoUrl} style={{ height: "8em", width: "auto" }} />
 						{/* Configurar para cambiar imágen */}
 						<div className="position-absolute top-0 end-0 text-light">
-							<Form.Group controlId="formFile" className="mb-3">
-								<Form.Label className="btn btn-outline-dark p-1 px-2 border">
-									<i className="bi bi-pencil-square"></i>
-								</Form.Label>
-								<Form.Control
-									type="file"
-									accept="image/*"
-									style={{ display: "none" }}
-									onChange={(e) => {
-										handleImageUpload(e);
-									}}
-								/>
-							</Form.Group>
+							{loading_profile_picture ? (
+								<>
+									<Spinner animation="border" variant="dark" />
+								</>
+							) : (
+								<>
+									<Form.Group controlId="formFile" className="mb-3">
+										<Form.Label className="btn btn-outline-dark p-1 px-2 border">
+											<i className="bi bi-pencil-square"></i>
+										</Form.Label>
+										<Form.Control
+											type="file"
+											accept="image/*"
+											style={{ display: "none" }}
+											onChange={(e) => {
+												handleImageUpload(e);
+											}}
+										/>
+									</Form.Group>
+								</>
+							)}
 						</div>
 					</div>
 

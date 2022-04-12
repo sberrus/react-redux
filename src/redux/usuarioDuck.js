@@ -10,6 +10,7 @@ const dataInicial = {
 
 // types
 const LOADING = "LOADING";
+const LOADING_PROFILE_PICTURE = "LOADING_PROFILE_PICTURE";
 const USUARIO_ERROR = "USUARIO_ERROR";
 const USUARIO_EXITO = "USUARIO_EXITO";
 const CERRAR_SESION_EXITO = "CERRAR_SESION_EXITO";
@@ -22,6 +23,8 @@ export default function usuarioReducer(state = dataInicial, action) {
 		//
 		case LOADING:
 			return { ...state, loading: true };
+		case LOADING_PROFILE_PICTURE:
+			return { ...state, loading_profile_picture: true };
 		case USUARIO_ERROR:
 			//Indicamos que el state va a ser de nuevo la data inicial que tiene ambos campos en false.
 			return { ...dataInicial };
@@ -32,7 +35,7 @@ export default function usuarioReducer(state = dataInicial, action) {
 		case ACTUALIZAR_NOMBRE_USUARIO_EXITO:
 			return { ...state, user: action.payload, loading: false };
 		case ACTUALIZAR_FOTO_PERFIL_EXITO:
-			return { ...state, user: action.payload, loading: false };
+			return { ...state, user: action.payload, loading_profile_picture: false };
 		default:
 			return { ...state };
 	}
@@ -129,7 +132,7 @@ export const cambiarNombreUsuario = (newName) => async (dispatch, getState) => {
 };
 export const editarFotoPerfil = (image) => async (dispatch, getState) => {
 	dispatch({
-		type: LOADING,
+		type: LOADING_PROFILE_PICTURE,
 	});
 
 	//Actual User
